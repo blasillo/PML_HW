@@ -1,0 +1,17 @@
+{
+    "contents" : "Practical Machine Learning \n========================================================\n\nA key early component of any machine learning project involves managing and understanding the data.\n\n\n## Getting started\n\n## Loading data\n```{r}\ndata <- read.csv(\"pml-training.csv\", stringsAsFactors = FALSE)\n```\n\n\nWhen you click the **Knit HTML** button a web page will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:\n\n```{r}\nsummary(cars)\n```\n\nYou can also embed plots, for example:\n\n```{r fig.width=7, fig.height=6}\nplot(cars)\n```\n\n",
+    "created" : 1402963775387.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2939884553",
+    "id" : "6237EAC2",
+    "lastKnownWriteTime" : 1402964263,
+    "path" : "C:/Users/Blas/Dropbox/curso ML/PML_HW/index.rmd",
+    "project_path" : "index.rmd",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "source_on_save" : false,
+    "type" : "r_markdown"
+}

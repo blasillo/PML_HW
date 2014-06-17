@@ -1,0 +1,26 @@
+Practical Machine Learning 
+========================================================
+
+A key early component of any machine learning project involves managing and understanding the data.
+
+
+## Getting started
+
+## Loading data
+```{r}
+data <- read.csv("pml-training.csv", stringsAsFactors = FALSE)
+```
+
+
+When you click the **Knit HTML** button a web page will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+summary(cars)
+```
+
+You can also embed plots, for example:
+
+```{r fig.width=7, fig.height=6}
+plot(cars)
+```
+
