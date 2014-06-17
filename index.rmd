@@ -1,26 +1,100 @@
-Practical Machine Learning 
+Practical Machine Learning - Prediction Assignment Writeup
 ========================================================
 
-A key early component of any machine learning project involves managing and understanding the data.
+## Background 
+
+Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively. These type of devices are part of the quantified self movement – a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. One thing that people regularly do is quantify how much of a particular activity they do, but they rarely quantify how well they do it. In this project, your goal will be to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants.
+
+
 
 
 ## Getting started
 
+A key early component of any machine learning project involves managing and understanding the data.
+
 ## Loading data
-```{r}
-data <- read.csv("pml-training.csv", stringsAsFactors = FALSE)
-```
 
-
-When you click the **Knit HTML** button a web page will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+The data come CSV (comma separated values) format and they can be easyly loaded by using R functions:
 
 ```{r}
-summary(cars)
+data <- read.csv("pml-training.csv",  na.strings = "NA", stringsAsFactors = FALSE)
+testing <- read.csv("pml-testing.csv",  na.strings = "NA",  stringsAsFactors = FALSE)
 ```
 
-You can also embed plots, for example:
+The training set consists of 19622 observations of 160 variables (features), witch data$classe is the dependent variable.
 
-```{r fig.width=7, fig.height=6}
-plot(cars)
+```{r}
+dim(data)
 ```
 
+Looking up the dataset we can see that many of the 159 features are empty in most of the observations:
+
+```{r}
+sum(complete.cases(data))
+```
+
+
+## Exploratory Analysis
+
+I choose 52 features and discanding some features that only introduced noise such as  X, user_name, raw_timestamp_part1, raw_timestamp_part2, cvtd_timestamp, new_window and num_window.
+
+
+```{r}
+columns <- c("roll_belt", "pitch_belt", "yaw_belt", "total_accel_belt", "gyros_belt_x", 
+    "gyros_belt_y", "gyros_belt_z", "accel_belt_x", "accel_belt_y", "accel_belt_z", "magnet_belt_x",
+    "magnet_belt_y", "magnet_belt_z", "roll_arm", "pitch_arm", "yaw_arm", "total_accel_arm",
+    "gyros_arm_x", "gyros_arm_y", "gyros_arm_z", "accel_arm_x", "accel_arm_y", "accel_arm_z",
+    "magnet_arm_x", "magnet_arm_y", "magnet_arm_z", "roll_dumbbell", "pitch_dumbbell", 
+    "yaw_dumbbell", "total_accel_dumbbell", "gyros_dumbbell_x", "gyros_dumbbell_y", 
+    "gyros_dumbbell_z", "accel_dumbbell_x", "accel_dumbbell_y", "accel_dumbbell_z", 
+    "magnet_dumbbell_x", "magnet_dumbbell_y", "magnet_dumbbell_z", "roll_forearm", 
+    "pitch_forearm", "yaw_forearm", "total_accel_forearm", "gyros_forearm_x", "gyros_forearm_y",
+    "gyros_forearm_z", "accel_forearm_x", "accel_forearm_y", "accel_forearm_z", "magnet_forearm_x",
+    "magnet_forearm_y", "magnet_forearm_z")
+
+training <- data [, c(columns, "classe")]
+
+```
+
+With this transformation, the resulting  dataser is now of 19622 observations of 53 features.
+
+```{r}
+dim(training)
+sum(complete.cases(training))
+```
+
+Now, once cleaned the dataset try to analyze the correlation between features.
+
+```{r}
+correlation <- cor(training[, columns])
+library(lattice)
+palette <- colorRampPalette(c("blue", "yellow"), space = "rgb")
+levelplot(correlation, 
+          main="Correlation Level Plot", xlab="",ylab="",aspect=1,
+          col.regions=palette(120), pretty=TRUE,
+          cuts=100, at=seq(0,1,0.01),
+          scales=list(x=list(rot=90)) )
+```
+
+Most of features have no too many degree of correlation. However, some other features that are correlated. 
+```{r}
+which(abs(correlation) > 0.99 & abs(correlation) < 1)
+
+columns <- columns [!columns %in% c("roll_belt")]
+
+training <- data [, c(columns, "classe")]
+
+testing <- testing[, columns]
+
+```
+
+
+## Predictive Model
+
+```{r}
+library(caret)
+control <- trainControl(method = "none")
+grid <- data.frame(interaction.depth = 4, n.trees = 300, shrinkage = 0.1)
+model <- train (training , training$classe , method="gmb" , tuneGrid=grid)
+
+```
